@@ -38,6 +38,7 @@ export default function Cart() {
   // Form submission and loading states
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
+  const [whatsappMsg, setWhatsappMsg] = useState('')
 
   // Load cart from localStorage
   const loadCart = () => {
@@ -309,6 +310,25 @@ export default function Cart() {
           updatedAt: new Date().toISOString()
         }, { merge: true })
       })
+
+      // Format WhatsApp Message details
+      const itemsListStr = items.map(item => `- ${item.name} (${item.size?.weight}) x ${item.qty} — ${item.size?.price}`).join('\n')
+      const discountText = pointsRedemptionVal > 0 ? `\n*Loyalty Discount:* -₹${pointsRedemptionVal.toLocaleString('en-IN')}` : ''
+      const shippingText = shippingFee === 0 ? 'FREE' : `₹${shippingFee}`
+      
+      const msg = `*New Order Confirmed!* 🌾\n\n` +
+                `*Order ID:* ${orderId}\n` +
+                `*Customer:* ${fullName.trim()}\n` +
+                `*Phone:* ${phone.trim()}\n\n` +
+                `*Items ordered:*\n${itemsListStr}\n\n` +
+                `*Subtotal:* ₹${subtotal.toLocaleString('en-IN')}${discountText}\n` +
+                `*Shipping:* ${shippingText}\n` +
+                `*Total Paid:* ₹${finalTotal.toLocaleString('en-IN')}\n\n` +
+                `*Delivery Address:*\n${address.trim()}${landmark.trim() ? `, Landmark: ${landmark.trim()}` : ''}\n` +
+                `Pincode: ${pincode.trim()}\n\n` +
+                `Please confirm my order. Thank you! 🙏`
+      
+      setWhatsappMsg(msg)
 
       // Success cleanup
       localStorage.removeItem('kf_cart')
@@ -779,6 +799,32 @@ export default function Cart() {
                     <p className="text-[12px] text-text-dark font-semibold">
                       Earned Points: <span className="text-green-main">+{estimatedEarnedPoints} points</span> added to profile.
                     </p>
+                  </div>
+                )}
+
+                {/* WhatsApp Confirmation Card */}
+                {whatsappMsg && (
+                  <div className="bg-green-xlight border border-border-green rounded-2xl p-6 mb-8 text-center space-y-3.5 shadow-sm">
+                    <div className="w-12 h-12 bg-[#25D366] text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold shadow-md">
+                      💬
+                    </div>
+                    <div>
+                      <h3 className="font-playfair font-bold text-text-dark text-[17px]">Send Order Details to WhatsApp</h3>
+                      <p className="text-[12px] text-text-muted max-w-sm mx-auto mt-1 leading-relaxed">
+                        To ensure fast dispatch, please click the button below to share your order details with us directly on WhatsApp.
+                      </p>
+                    </div>
+                    <a
+                      href={`https://wa.me/916381594945?text=${encodeURIComponent(whatsappMsg)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba59] active:scale-[0.98] text-white font-dm font-bold text-[14px] px-6 py-3.5 rounded-xl transition shadow-md no-underline"
+                    >
+                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.863-9.858.002-2.634-1.013-5.11-2.861-6.958-1.848-1.847-4.322-2.86-6.957-2.862-5.442 0-9.863 4.42-9.866 9.86-.001 1.77.462 3.5 1.34 5.025l-.974 3.564 3.65-.957zm11.751-6.94c-.29-.145-1.715-.847-1.98-.943-.264-.096-.456-.145-.648.145-.191.29-.741.943-.909 1.135-.168.19-.336.213-.626.069-.29-.147-1.227-.452-2.339-1.443-.866-.772-1.451-1.725-1.621-2.016-.17-.29-.018-.447.127-.592.13-.13.29-.339.435-.508.145-.17.193-.29.29-.483.097-.19.048-.361-.024-.507-.072-.145-.648-1.56-.888-2.136-.233-.56-.47-.483-.648-.492-.167-.008-.36-.01-.552-.01-.193 0-.507.072-.772.361-.264.29-1.01 1.01-1.01 2.47 0 1.46 1.058 2.87 1.202 3.06.145.19 2.083 3.18 5.047 4.46.705.305 1.256.487 1.684.623.71.226 1.357.194 1.868.118.571-.085 1.715-.7 1.96-1.378.246-.678.246-1.26.172-1.378-.073-.118-.265-.19-.555-.335z"/>
+                      </svg>
+                      Confirm Order via WhatsApp
+                    </a>
                   </div>
                 )}
 

@@ -27,7 +27,7 @@ export function ProductProvider({ children }) {
       })
 
       // Auto-seeding: if Firestore is empty, populate it with existing catalog
-      if (list.length === 0 && loading) {
+      if (list.length === 0) {
         console.log('[ProductContext] Firestore empty. Bootstrapping seed products...')
         try {
           const batch = writeBatch(db)
@@ -66,7 +66,7 @@ export function ProductProvider({ children }) {
     })
 
     return unsubscribe
-  }, [loading])
+  }, [])
 
   // ── Actions ────────────────────────────────────────────────────────────────
 

@@ -5,7 +5,7 @@
 
 import { initializeApp, getApps, getApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { initializeFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey:            import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyB8ah-qkL9dO6D7J78jKn9wN2re4Ny6zzk",
@@ -32,6 +32,8 @@ googleProvider.setCustomParameters({
 })
 
 // ── Firestore ─────────────────────────────────────────────────────────────────
-export const db = getFirestore(app)
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+})
 
 export default app

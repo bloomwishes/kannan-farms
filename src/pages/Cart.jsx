@@ -411,10 +411,10 @@ export default function Cart() {
                           initial={{ opacity: 0, y: 16 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, x: 60, transition: { duration: 0.25 } }}
-                          className="bg-white border border-border-green rounded-2xl p-5 flex items-center gap-5 shadow-sm"
+                          className="bg-white border border-border-green rounded-2xl p-4 md:p-5 flex items-start md:items-center gap-4 md:gap-5 shadow-sm"
                         >
                           <Link to={`/product/${item.slug}`} className="flex-shrink-0">
-                            <div className="w-[72px] h-[72px] rounded-xl bg-green-xlight border border-border-green overflow-hidden flex items-center justify-center">
+                            <div className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-xl bg-green-xlight border border-border-green overflow-hidden flex items-center justify-center">
                               <img
                                 src={`assets/${item.name.split(' ')[0]} 1.png`}
                                 alt={item.name}
@@ -426,31 +426,38 @@ export default function Cart() {
                             </div>
                           </Link>
 
-                          <div className="flex-1 min-w-0">
-                            <Link to={`/product/${item.slug}`} className="font-playfair font-bold text-[16px] text-text-dark hover:text-green-main transition-colors no-underline block truncate">
-                              {item.name}
-                            </Link>
-                            <div className="text-[12px] text-text-muted mt-0.5">{item.size?.weight}</div>
-                            <div className="text-[15px] font-bold text-green-main mt-1">{item.size?.price}</div>
-                          </div>
+                          <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <Link to={`/product/${item.slug}`} className="font-playfair font-bold text-[15px] sm:text-[16px] text-text-dark hover:text-green-main transition-colors no-underline block sm:truncate">
+                                {item.name}
+                              </Link>
+                              <div className="flex sm:flex-col items-center sm:items-start gap-2 sm:gap-0 mt-0.5">
+                                <span className="text-[12px] text-text-muted">{item.size?.weight}</span>
+                                <span className="sm:hidden text-[12px] text-text-muted">•</span>
+                                <span className="text-[14px] sm:text-[15px] font-bold text-green-main sm:mt-1">{item.size?.price}</span>
+                              </div>
+                            </div>
 
-                          {/* Qty controls */}
-                          <div className="flex items-center gap-1 bg-offwhite border border-border-green rounded-xl overflow-hidden">
-                            <button onClick={() => updateQty(item.key, -1)} className="w-9 h-9 flex items-center justify-center text-[16px] font-bold text-text-dark hover:bg-green-xlight transition-colors">−</button>
-                            <span className="min-w-[28px] text-center text-[14px] font-semibold">{item.qty}</span>
-                            <button onClick={() => updateQty(item.key, +1)} className="w-9 h-9 flex items-center justify-center text-[16px] font-bold text-text-dark hover:bg-green-xlight transition-colors">+</button>
-                          </div>
+                            <div className="flex items-center justify-between sm:justify-end gap-3 mt-1 sm:mt-0">
+                              {/* Qty controls */}
+                              <div className="flex items-center gap-1 bg-offwhite border border-border-green rounded-xl overflow-hidden">
+                                <button onClick={() => updateQty(item.key, -1)} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[15px] sm:text-[16px] font-bold text-text-dark hover:bg-green-xlight transition-colors">−</button>
+                                <span className="min-w-[24px] sm:min-w-[28px] text-center text-[13px] sm:text-[14px] font-semibold">{item.qty}</span>
+                                <button onClick={() => updateQty(item.key, +1)} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[15px] sm:text-[16px] font-bold text-text-dark hover:bg-green-xlight transition-colors">+</button>
+                              </div>
 
-                          {/* Remove */}
-                          <button
-                            onClick={() => removeItem(item.key)}
-                            className="p-2 text-text-muted hover:text-red-500 transition-colors"
-                            aria-label="Remove item"
-                          >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                              <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                            </svg>
-                          </button>
+                              {/* Remove */}
+                              <button
+                                onClick={() => removeItem(item.key)}
+                                className="p-1.5 sm:p-2 text-text-muted hover:text-red-500 transition-colors ml-auto sm:ml-0"
+                                aria-label="Remove item"
+                              >
+                                <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                                  <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
                         </motion.div>
                       ))}
                     </AnimatePresence>
@@ -718,14 +725,7 @@ export default function Cart() {
                           <span className="text-green-main font-semibold">FREE Delivery</span>
                         </span>
                       ) : (
-                        <span className="flex flex-col items-end">
-                          <span>₹{shippingFee}</span>
-                          {subtotal > 500 && calculatedShipping > 100 && (
-                            <span className="text-[9px] text-amber-dark font-medium leading-none mt-0.5">
-                              (Shipping exceeds ₹100 threshold)
-                            </span>
-                          )}
-                        </span>
+                        <span>₹{shippingFee}</span>
                       )}
                     </span>
                   </div>

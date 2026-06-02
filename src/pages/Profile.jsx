@@ -212,9 +212,9 @@ function EmptyOrders() {
       className="text-center py-16 px-6"
     >
       <div className="text-6xl mb-4">🌿</div>
-      <h3 className="font-playfair font-bold text-text-dark text-xl mb-2">No orders yet</h3>
-      <p className="text-text-muted text-sm max-w-xs mx-auto mb-6">
-        Looks like you haven't placed an order with Kannan Farms yet. Explore our natural products!
+      <h3 className="font-playfair font-bold text-text-dark text-xl mb-2">No orders found</h3>
+      <p className="text-text-muted text-sm max-w-md mx-auto mb-6">
+        Place an order to track and view your orders here! Explore our farm-fresh natural products.
       </p>
       <Link
         to="/?scroll=products"

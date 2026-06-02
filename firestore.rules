@@ -47,7 +47,7 @@ service cloud.firestore {
     // ── Orders collection ───────────────────────────────────────────────────
     match /orders/{orderId} {
       // READ: only the order owner can read their own orders
-      allow read: if isAuthenticated() && isOwner(resource.data.userId);
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
 
       // CREATE: authenticated users can create orders for themselves
       // (in production this would typically be a Cloud Function / server SDK)

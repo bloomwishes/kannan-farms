@@ -51,8 +51,10 @@ export function ProductProvider({ children }) {
 
           await batch.commit()
           console.log('[ProductContext] Auto-seeding completed successfully.')
+          setLoading(false)
         } catch (err) {
           console.error('[ProductContext] Error auto-seeding products:', err)
+          setLoading(false)
         }
       } else {
         // Sort products by creation date or name to maintain stable ordering

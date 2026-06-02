@@ -79,11 +79,62 @@ export default function AdminDashboard() {
   const handleUpdateOrderStatus = async (orderDocId, newStatus) => {
     setUpdatingOrderId(orderDocId)
     try {
+      const order = orders.find((o) => o.id === orderDocId)
+      if (!order) return
+
       const orderRef = doc(db, 'orders', orderDocId)
-      await updateDoc(orderRef, {
-        status: newStatus,
-        updatedAt: new Date().toISOString()
-      })
+      
+      // If status is Shipped and stock has not been reduced yet
+      if (newStatus === 'Shipped' && !order.inventoryReduced) {
+        const batch = writeBatch(db)
+        
+        for (const item of order.items || []) {
+          // Resolve product slug (id)
+          const productId = item.id || (item.name.toLowerCase().includes('moringa') ? 'moringa-powder' : 'banana-powder')
+          
+          // Parse weight size e.g. "500g"
+          let sizeWeight = item.sizeWeight
+          if (!sizeWeight) {
+            const match = item.name.match(/\(([^)]+)\)/)
+            if (match) {
+              sizeWeight = match[1]
+            }
+          }
+          
+          if (!sizeWeight) continue
+
+          const product = products.find(p => p.id === productId)
+          if (product && product.sizes) {
+            const updatedSizes = product.sizes.map((s) => {
+              if (s.weight === sizeWeight) {
+                const currentStock = s.stock !== undefined ? s.stock : 50
+                return { ...s, stock: Math.max(0, currentStock - item.qty) }
+              }
+              return s
+            })
+            const prodRef = doc(db, 'products', productId)
+            batch.update(prodRef, {
+              sizes: updatedSizes,
+              updatedAt: new Date().toISOString()
+            })
+          }
+        }
+        
+        // Update the order status and set inventoryReduced to true in the batch
+        batch.update(orderRef, {
+          status: newStatus,
+          inventoryReduced: true,
+          updatedAt: new Date().toISOString()
+        })
+        
+        await batch.commit()
+      } else {
+        // Just update status normally
+        await updateDoc(orderRef, {
+          status: newStatus,
+          updatedAt: new Date().toISOString()
+        })
+      }
     } catch (err) {
       console.error('[AdminDashboard] Failed to update order status:', err)
       alert('Failed to update order status. Please try again.')

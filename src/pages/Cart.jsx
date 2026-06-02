@@ -310,6 +310,8 @@ export default function Cart() {
       courier: 'Delhivery',
       shippingFee,
       items: items.map((item) => ({
+        id: item.slug || item.key.split('_')[0],
+        sizeWeight: item.size?.weight,
         name: `${item.name} (${item.size?.weight})`,
         qty: item.qty,
         price: parsePrice(item.size?.price)
